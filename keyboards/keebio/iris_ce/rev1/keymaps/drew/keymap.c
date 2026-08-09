@@ -9,19 +9,104 @@ enum custom_layers {
      _RAISE
 };
 
+enum custom_tap_dances {
+     TD_BSPC_F12,
+     TD_QUOT_DQT,
+     TD_1_F1,
+     TD_2_F2,
+     TD_3_F3,
+     TD_4_F4,
+     TD_5_F5,
+     TD_6_F6,
+     TD_7_F7,
+     TD_8_F8,
+     TD_9_F9,
+     TD_0_F10,
+};
+
+void td_bspc_finished(tap_dance_state_t *state, void *user_data) {
+    if (state->pressed) {
+        register_code16(KC_F12);
+    } else {
+        tap_code16(LCTL(KC_EQL));
+    }
+}
+void td_bspc_reset(tap_dance_state_t *state, void *user_data) {
+    unregister_code16(KC_F12);
+}
+
+void td_quot_finished(tap_dance_state_t *state, void *user_data) {
+    if (state->pressed) {
+        register_code16(LSFT(KC_QUOT));
+    } else {
+        tap_code16(KC_QUOT);
+    }
+}
+void td_quot_reset(tap_dance_state_t *state, void *user_data) {
+    unregister_code16(LSFT(KC_QUOT));
+}
+
+// Generic "tap = digit, hold = matching function key" pair, used for the number row.
+typedef struct {
+    uint16_t tap_kc;
+    uint16_t hold_kc;
+} tap_hold_t;
+
+void td_number_fkey_finished(tap_dance_state_t *state, void *user_data) {
+    tap_hold_t *pair = (tap_hold_t *)user_data;
+    if (state->pressed) {
+        register_code16(pair->hold_kc);
+    } else {
+        tap_code16(pair->tap_kc);
+    }
+}
+void td_number_fkey_reset(tap_dance_state_t *state, void *user_data) {
+    tap_hold_t *pair = (tap_hold_t *)user_data;
+    if (state->pressed) {
+        unregister_code16(pair->hold_kc);
+    }
+}
+
+#define ACTION_TAP_DANCE_NUMBER_FKEY(tap_kc, hold_kc) \
+    { .fn = {NULL, td_number_fkey_finished, td_number_fkey_reset, NULL}, .user_data = (void *)&((tap_hold_t){tap_kc, hold_kc}), }
+
+tap_dance_action_t tap_dance_actions[] = {
+    [TD_BSPC_F12] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_bspc_finished, td_bspc_reset),
+    [TD_QUOT_DQT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_quot_finished, td_quot_reset),
+    [TD_1_F1]     = ACTION_TAP_DANCE_NUMBER_FKEY(KC_1, KC_F1),
+    [TD_2_F2]     = ACTION_TAP_DANCE_NUMBER_FKEY(KC_2, KC_F2),
+    [TD_3_F3]     = ACTION_TAP_DANCE_NUMBER_FKEY(KC_3, KC_F3),
+    [TD_4_F4]     = ACTION_TAP_DANCE_NUMBER_FKEY(KC_4, KC_F4),
+    [TD_5_F5]     = ACTION_TAP_DANCE_NUMBER_FKEY(KC_5, KC_F5),
+    [TD_6_F6]     = ACTION_TAP_DANCE_NUMBER_FKEY(KC_6, KC_F6),
+    [TD_7_F7]     = ACTION_TAP_DANCE_NUMBER_FKEY(KC_7, KC_F7),
+    [TD_8_F8]     = ACTION_TAP_DANCE_NUMBER_FKEY(KC_8, KC_F8),
+    [TD_9_F9]     = ACTION_TAP_DANCE_NUMBER_FKEY(KC_9, KC_F9),
+    [TD_0_F10]    = ACTION_TAP_DANCE_NUMBER_FKEY(KC_0, KC_F10),
+};
+
+uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case LGUI_T(KC_A):
+            return 250;
+        default:
+            return TAPPING_TERM;
+    }
+}
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [_QWERTY] = LAYOUT(
   //┌────────┬────────┬────────┬────────┬────────┬────────┐                          ┌────────┬────────┬────────┬────────┬────────┬────────┐
-     QK_GESC, KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                               KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_BSPC,
+     KC_VOLU, TD(TD_1_F1), TD(TD_2_F2), TD(TD_3_F3), TD(TD_4_F4), TD(TD_5_F5),         TD(TD_6_F6), TD(TD_7_F7), TD(TD_8_F8), TD(TD_9_F9), TD(TD_0_F10), TD(TD_BSPC_F12),
   //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
-     KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                               KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_DEL,
+     KC_VOLD, KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                               KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    LCTL(KC_MINS),
   //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
-     KC_LCTL, LGUI_T(KC_A), LALT_T(KC_S), LCTL_T(KC_D), LSFT_T(KC_F), KC_G,           KC_H,    RSFT_T(KC_J), RCTL_T(KC_K), RALT_T(KC_L), RGUI_T(KC_SCLN), KC_QUOT,
+     LCTL_T(KC_ESC), LGUI_T(KC_A), LALT_T(KC_S), LCTL_T(KC_D), LSFT_T(KC_F), KC_G,     KC_H,    RSFT_T(KC_J), RCTL_T(KC_K), RALT_T(KC_L), RGUI_T(KC_SCLN), TD(TD_QUOT_DQT),
   //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐        ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
-     KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_HOME,          KC_END,  KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,
+     KC_MUTE, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_ENT,           KC_NO,   KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_NO,
   //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
-                                    KC_LGUI, TL_LOWR, KC_ENT,                    KC_SPC,  TL_UPPR, KC_RALT
+                                    KC_LSFT, LT(_LOWER, KC_SPC), KC_TAB,          KC_BSPC, TL_UPPR, KC_DEL
                                 // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
   ),
 
@@ -64,6 +149,15 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         rgb_matrix_set_color(51, 0xF8, 0x6E, 0xD6); // RALT_T(KC_L)
         rgb_matrix_set_color(16, 0x00, 0x75, 0xFF); // LGUI_T(KC_A)
         rgb_matrix_set_color(50, 0x00, 0x75, 0xFF); // RGUI_T(KC_SCLN)
+        rgb_matrix_set_color(0,  0x0B, 0xDD, 0x35); // KC_VOLU
+        rgb_matrix_set_color(14, 0xFF, 0xF5, 0x00); // KC_VOLD
+        rgb_matrix_set_color(26, 0xF5, 0x09, 0x09); // KC_MUTE
+        rgb_matrix_set_color(34, 0x42, 0xFF, 0x00); // TD_BSPC_F12
+        rgb_matrix_set_color(48, 0xFF, 0xF5, 0x00); // LCTL(KC_MINS)
+        rgb_matrix_set_color(66, 0xF5, 0x09, 0x09); // KC_BSPC (thumb)
+        rgb_matrix_set_color(63, 0xF5, 0x09, 0x09); // KC_DEL (thumb)
+        rgb_matrix_set_color(60, 0x00, 0x00, 0x00); // KC_NO (was KC_RSFT)
+        rgb_matrix_set_color(67, 0x00, 0x00, 0x00); // KC_NO (was KC_END)
     }
     return true;
 }
