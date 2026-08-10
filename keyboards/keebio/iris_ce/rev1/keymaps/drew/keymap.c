@@ -112,15 +112,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [_LOWER] = LAYOUT(
   //┌────────┬────────┬────────┬────────┬────────┬────────┐                          ┌────────┬────────┬────────┬────────┬────────┬────────┐
-     KC_TILD, KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC,                            KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_PGUP,
+     QK_BOOT, KC_NO,   EE_CLR,  KC_NO,   KC_SYRQ, KC_NO,                              KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
   //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
-     KC_GRV,  _______, KC_UP,   _______, QK_BOOT, _______,                            _______, KC_P7,   KC_P8,   KC_P9,   KC_P0,   KC_PGDN,
+     KC_NO,   KC_NO,   LCTL(KC_B), LCTL(KC_1), LCTL(KC_2), LCA(KC_B),                 _______, KC_PGUP, KC_UP,   KC_PGDN, KC_NO,   KC_NO,
   //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
-     KC_DEL,  KC_LEFT, KC_DOWN, KC_RGHT, _______, KC_LBRC,                            KC_RBRC, KC_P4,   KC_P5,   KC_P6,   KC_PLUS, KC_PIPE,
+     LCTL(KC_LBRC), KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT, LCTL(KC_RBRC),                 KC_HOME, KC_LEFT, KC_DOWN, KC_RGHT, KC_END,  KC_NO,
   //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐        ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
-     RM_NEXT, EE_CLR,  _______, _______, _______, KC_LCBR, KC_LPRN,          KC_RPRN, KC_RCBR, KC_P1,   KC_P2,   KC_P3,   KC_MINS, _______,
+      KC_NO,   KC_NO,   KC_NO,   LCTL(LSFT(KC_GRV)), LCTL(KC_GRV), KC_NO, KC_NO,     KC_NO,   KC_NO,   KC_PGDN, KC_NO,   KC_NO,   KC_SLSH, _______,
   //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
-                                    _______, _______, KC_DEL,                    KC_DEL,  _______, KC_P0
+                                    _______, _______, KC_NO,                     KC_BSPC, KC_ENT,  KC_DEL
                                 // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
   ),
 
@@ -158,6 +158,55 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         rgb_matrix_set_color(63, 0xF5, 0x09, 0x09); // KC_DEL (thumb)
         rgb_matrix_set_color(60, 0x00, 0x00, 0x00); // KC_NO (was KC_RSFT)
         rgb_matrix_set_color(67, 0x00, 0x00, 0x00); // KC_NO (was KC_END)
+    } else if (get_highest_layer(layer_state) == _LOWER) {
+        rgb_matrix_set_color(0,  0xFF, 0xA5, 0x00); // QK_BOOT
+        rgb_matrix_set_color(2,  0x00, 0x00, 0x00); // KC_NO
+        rgb_matrix_set_color(3,  0xFF, 0xA5, 0x00); // EE_CLR
+        rgb_matrix_set_color(5,  0x00, 0x00, 0x00); // KC_NO
+        rgb_matrix_set_color(6,  0x8F, 0xA3, 0x00); // KC_SYRQ
+        rgb_matrix_set_color(8,  0x00, 0x00, 0x00); // KC_NO
+        rgb_matrix_set_color(14, 0x00, 0x00, 0x00); // KC_NO
+        rgb_matrix_set_color(13, 0x00, 0x00, 0x00); // KC_NO
+        rgb_matrix_set_color(12, 0x42, 0xFF, 0x00); // ctrl+b
+        rgb_matrix_set_color(11, 0xFF, 0x00, 0x8A); // ctrl+1
+        rgb_matrix_set_color(10, 0xFF, 0x00, 0x8A); // ctrl+2
+        rgb_matrix_set_color(9,  0x42, 0xFF, 0x00); // ctrl+alt+b
+        rgb_matrix_set_color(16, 0x00, 0x75, 0xFF); // KC_LGUI
+        rgb_matrix_set_color(17, 0xF8, 0x6E, 0xD6); // KC_LALT
+        rgb_matrix_set_color(18, 0x00, 0xFF, 0x31); // KC_LCTL
+        rgb_matrix_set_color(19, 0xFF, 0xF5, 0x00); // KC_LSFT
+        rgb_matrix_set_color(26, 0x00, 0x00, 0x00); // KC_NO
+        rgb_matrix_set_color(25, 0x00, 0x00, 0x00); // KC_NO
+        rgb_matrix_set_color(24, 0x00, 0x00, 0x00); // KC_NO
+        rgb_matrix_set_color(23, 0x61, 0x00, 0xFF); // ctrl+shift+`
+        rgb_matrix_set_color(22, 0x61, 0x00, 0xFF); // ctrl+`
+        rgb_matrix_set_color(21, 0x00, 0x00, 0x00); // KC_NO
+        rgb_matrix_set_color(33, 0x00, 0x00, 0x00); // KC_NO
+        rgb_matrix_set_color(32, 0x00, 0x00, 0x00); // KC_NO (thumb)
+        rgb_matrix_set_color(42, 0x00, 0x00, 0x00); // KC_NO
+        rgb_matrix_set_color(40, 0x00, 0x00, 0x00); // KC_NO
+        rgb_matrix_set_color(39, 0x00, 0x00, 0x00); // KC_NO
+        rgb_matrix_set_color(37, 0x00, 0x00, 0x00); // KC_NO
+        rgb_matrix_set_color(36, 0x00, 0x00, 0x00); // KC_NO
+        rgb_matrix_set_color(34, 0x00, 0x00, 0x00); // KC_NO
+        rgb_matrix_set_color(44, 0xFF, 0x00, 0xE5); // KC_PGUP
+        rgb_matrix_set_color(45, 0x00, 0x75, 0xFF); // KC_UP
+        rgb_matrix_set_color(46, 0xFF, 0x00, 0xE5); // KC_PGDN
+        rgb_matrix_set_color(47, 0x00, 0x00, 0x00); // KC_NO
+        rgb_matrix_set_color(48, 0x00, 0x00, 0x00); // KC_NO
+        rgb_matrix_set_color(54, 0xFF, 0xF5, 0x00); // KC_HOME
+        rgb_matrix_set_color(53, 0x00, 0x75, 0xFF); // KC_LEFT
+        rgb_matrix_set_color(52, 0x00, 0x75, 0xFF); // KC_DOWN
+        rgb_matrix_set_color(51, 0x00, 0x75, 0xFF); // KC_RGHT
+        rgb_matrix_set_color(50, 0xFF, 0xF5, 0x00); // KC_END
+        rgb_matrix_set_color(49, 0x00, 0x00, 0x00); // KC_NO
+        rgb_matrix_set_color(67, 0x00, 0x00, 0x00); // KC_NO
+        rgb_matrix_set_color(55, 0x00, 0x00, 0x00); // KC_NO
+        rgb_matrix_set_color(56, 0xFF, 0x00, 0xE5); // KC_PGDN
+        rgb_matrix_set_color(57, 0x00, 0x00, 0x00); // KC_NO
+        rgb_matrix_set_color(58, 0x00, 0x00, 0x00); // KC_NO
+        rgb_matrix_set_color(66, 0xF5, 0x09, 0x09); // KC_BSPC (thumb)
+        rgb_matrix_set_color(63, 0xF5, 0x09, 0x09); // KC_DEL (thumb)
     }
     return true;
 }
